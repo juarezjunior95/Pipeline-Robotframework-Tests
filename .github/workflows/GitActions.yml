@@ -1,60 +1,29 @@
-name: Testes Web no Robot Framework
+name: Web Tests
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push]
 
 jobs:
-  build-and-test:
+  test:
+    name: Web Tests
     runs-on: ubuntu-latest
-
     container:
       image: robotframework/robotframework:latest
-
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v2
-
     - name: Install dependencies
       run: |
-        apt-get update && apt-get install -yq \
-        curl \
-        unzip \
-        wget \
-        xvfb \
-        && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-        && apt-get install -yq nodejs
-
-    - name: Start Xvfb
-      run: Xvfb -ac :99 &
-
-    - name: Run tests on Chrome
+        apt-get update && \
+        apt-get install -y curl unzip wget && \
+        curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+        apt-get install -y nodejs && \
+        npm install -g chromedriver
+    - name: Run tests
       run: |
-        robot --variable BROWSER:chrome tests/
-
-    - name: Upload test results
+        chromedriver &
+        robot --outputdir test_results --variable BROWSER:Chrome tests/
+    - name: Upload Test Results
       uses: actions/upload-artifact@v2
       with:
         name: Test Results
-        path: output.xml
-
-    - name: Run tests on Edge
-      run: |
-        robot --variable BROWSER:edge tests/
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v2
-      with:
-        name: Test Results
-        path: output.xml
-
-    - name: Send Notification on Failure
-      if: always()
-      uses: actions/slack@v3.1.0
-      with:
-        status: ${{ job.status }}
-        fields: title, commit, author, status, conclusion, job, logs
-        slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-        slack-channel: my-channel
+        path: test_results/
