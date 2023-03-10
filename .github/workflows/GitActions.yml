@@ -1,31 +1,71 @@
-name: Web Tests
+name: Testes Web no Robot Framework
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     container:
-      image: robotframework/robotframework:latest
+      image: python:3.9-slim-buster
+      options: --user root
+      volumes:
+        - .:/app
+      env:
+        CHROME_BIN: google-chrome
+        DISPLAY: ":99"
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        options: --shm-size=2g
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Install dependencies
-      run: |
-        apt-get update && \
-        apt-get install -y curl unzip wget && \
-        curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-        apt-get install -y nodejs && \
-        npm install -g chromedriver
-    - name: Run tests
-      run: |
-        chromedriver &
-        robot --outputdir test_results --variable BROWSER:Chrome E2E/
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v2
-      with:
-        name: Test Results
-        path: test_results/
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          apt-get update
+          apt-get install -y wget gnupg2
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+          echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list
+          apt-get update
+          apt-get install -y google-chrome-stable
+          apt-get install -y xvfb
+          apt-get install -y curl
+          curl -sL https://deb.nodesource.com/setup_14.x | bash -
+          apt-get install -y nodejs
+          npm install
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        env:
+          ROBOT_SYSLOG_FILE: ${{github.workspace}}/robot-syslog.log
+        run: |
+          xvfb-run --server-args="-screen 0 1024x768x24" robot -d results tests/E2E
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test Results
+          path: results
+
+      - name: Notify Test Results
+        uses: ilian8808/action-telegram-notifications@v1.3.3
+        env:
+          TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
+          TELEGRAM_CHAT_ID: ${{secrets.TELEGRAM_CHAT_ID}}
+        with:
+          message: |
+            :robot: *Test Results*
+            Repository: `${{github.repository}}`
+            Branch: `${{github.ref}}`
+            Commit: `${{github.sha}}`
+            Workflow: `${{github.workflow}}`
+            Run Number: `${{github.run_number}}`
+          if: always()
