@@ -1,46 +1,43 @@
-name: Testes Web
-
+name: Testes Web no Google Chrome no modo headless
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  test:
+  chrome-tests:
     runs-on: ubuntu-latest
-
+    container:
+      image: python:3.8-slim
+      options: --user=root
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      
+      # Instala as dependências do ChromeDriver e do Node
+      - name: Instala as dependências
+        run: |
+          apt-get update && apt-get install -y wget unzip && \
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+          echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
+          apt-get update && apt-get install -y google-chrome-stable && \
+          wget https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_linux64.zip && \
+          unzip chromedriver_linux64.zip && \
+          mv chromedriver /usr/bin/chromedriver && \
+          chmod +x /usr/bin/chromedriver && \
+          curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+          apt-get install -y nodejs && \
+          npm install -g npm
+      
+      # Executa os testes no modo headless no Google Chrome
+      - name: Executa os testes no modo headless no Google Chrome
+        run: |
+          pip install -r E2E/requirements.txt
+          robot --outputdir E2E/Results --variable BROWSER:chrome --variable HEADLESS:True E2E/Tests
 
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Install Chrome Driver
-      run: |
-        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
-        LATEST_CHROMEDRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
-        wget https://chromedriver.storage.googleapis.com/$LATEST_CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/bin/chromedriver
-        sudo chown root:root /usr/bin/chromedriver
-        sudo chmod +x /usr/bin/chromedriver
-
-    - name: Install Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '14.x'
-
-    - name: Run tests
-      run: |
-        robot --outputdir results E2E/
+      # Define a ação a ser executada mesmo que os testes falhem
+      - name: Ação a ser executada mesmo que os testes falhem
+        continue-on-error: true
+        run: echo "Os testes falharam, mas a pipeline continua"
