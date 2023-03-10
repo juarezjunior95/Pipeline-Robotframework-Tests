@@ -35,10 +35,10 @@ jobs:
         sudo mv chromedriver /usr/bin/chromedriver
         sudo chown root:root /usr/bin/chromedriver
         sudo chmod +x /usr/bin/chromedriver
-        
+
     - name: Executa os testes no modo headless no Google Chrome
       run: |
-          pip install -r E2E/requirements.txt
+          pip install -r  requirements.txt
           robot --outputdir E2E/Results --variable BROWSER:chrome --variable HEADLESS:True E2E/Tests
 
     - name: Install Node.js
