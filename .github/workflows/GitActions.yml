@@ -1,29 +1,45 @@
+name: Testes Web
+
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
-name: Testes Web com Google Chrome na nuvem
 jobs:
-  testes_web:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
-    - name: Setup Node.js
+
+    - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '14.x'
-    - name: Instalar dependências
+
+    - name: Install Dependencies
       run: npm install
-services:
-  chrome:
-    image: selenium/standalone-chrome
-    options: --shm-size=2g
-steps:
-- name: Iniciar Selenium
-  run: |
-    docker pull selenium/standalone-chrome
-    docker run -d -p 4444:4444 --shm-size=2g selenium/standalone-chrome
-- name: Executar testes
-  env:
-    SELENIUM_HUB_URL: http://localhost:4444/wd/hub
-  run: npm test || echo "Testes falharam"
+
+    - name: Start Xvfb
+      uses: roboticcheetah/xvfb-action@v1
+
+    - name: Run Tests
+      run: |
+        export DISPLAY=:99
+        npm run test
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test Results
+        path: test-results.xml
+
+    - name: Send Notification on Failure
+      if: always()
+      uses: actions/slack@v3.1.0
+      with:
+        status: ${{ job.status }}
+        fields: title, commit, author, status, conclusion, job, logs
+        slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+        slack-channel: my-channel
