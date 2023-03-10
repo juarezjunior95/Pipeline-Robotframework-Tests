@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.0.2 (Python 3.11.1 on win32)" generated="20230127 12:03:01.295" rpa="false" schemaversion="3">
+<suite id="s1" name="Tests" source="c:\Users\juares.junior\Documents\Projetos\MultiVanegadores\tests">
+<suite id="s1-s1" name="Login Chrome" source="c:\Users\juares.junior\Documents\Projetos\MultiVanegadores\tests\login_chrome.robot">
+<test id="s1-s1-t1" name="Cenário: Login com sucesso" line="7">
+<kw name="Dado que estou na tela de login no Chrome" library="base" sourcename="Dado que estou na tela de login no ${browser}">
+<kw name="Open Browser" library="SeleniumLibrary">
+<arg>${url}</arg>
+<arg>${browser}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<msg timestamp="20230127 12:03:01.564" level="INFO">Opening browser 'Chrome' to base url 'https://the-internet.herokuapp.com/login'.</msg>
+<status status="PASS" starttime="20230127 12:03:01.563" endtime="20230127 12:03:06.364"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:01.563" endtime="20230127 12:03:06.364"/>
+</kw>
+<kw name="Quando realizo o login" library="base">
+<kw name="Input Text" library="SeleniumLibrary">
+<arg>id=username</arg>
+<arg>tomsmith</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<msg timestamp="20230127 12:03:06.366" level="INFO">Typing text 'tomsmith' into text field 'id=username'.</msg>
+<status status="PASS" starttime="20230127 12:03:06.365" endtime="20230127 12:03:06.449"/>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<arg>id=password</arg>
+<arg>SuperSecretPassword!</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<msg timestamp="20230127 12:03:06.449" level="INFO">Typing text 'SuperSecretPassword!' into text field 'id=password'.</msg>
+<status status="PASS" starttime="20230127 12:03:06.449" endtime="20230127 12:03:06.538"/>
+</kw>
+<kw name="Click Button" library="SeleniumLibrary">
+<arg>Login</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<msg timestamp="20230127 12:03:06.539" level="INFO">Clicking button 'Login'.</msg>
+<status status="PASS" starttime="20230127 12:03:06.538" endtime="20230127 12:03:06.948"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:06.365" endtime="20230127 12:03:06.948"/>
+</kw>
+<kw name="Então devo visualizar a mensagem &quot;You logged into a secure area!&quot;" library="base" sourcename="Então devo visualizar a mensagem &quot;${mensagem}&quot;">
+<kw name="Element Text Should Be" library="SeleniumLibrary">
+<arg>id=flash</arg>
+<arg>You logged into a secure area!\n×</arg>
+<doc>Verifies that element ``locator`` contains exact the text ``expected``.</doc>
+<msg timestamp="20230127 12:03:06.950" level="INFO">Verifying element 'id=flash' contains exact text 'You logged into a secure area!
+×'.</msg>
+<status status="PASS" starttime="20230127 12:03:06.949" endtime="20230127 12:03:06.974"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:06.949" endtime="20230127 12:03:06.974"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:01.562" endtime="20230127 12:03:06.975"/>
+</test>
+<kw name="Close Browser" library="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" starttime="20230127 12:03:06.978" endtime="20230127 12:03:09.244"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:01.327" endtime="20230127 12:03:09.245"/>
+</suite>
+<suite id="s1-s2" name="LoginEdge" source="c:\Users\juares.junior\Documents\Projetos\MultiVanegadores\tests\LoginEdge.robot">
+<test id="s1-s2-t1" name="Cenário: Login com sucesso" line="7">
+<kw name="Dado que estou na tela de login no Edge" library="base" sourcename="Dado que estou na tela de login no ${browser}">
+<kw name="Open Browser" library="SeleniumLibrary">
+<arg>${url}</arg>
+<arg>${browser}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<msg timestamp="20230127 12:03:09.281" level="INFO">Opening browser 'Edge' to base url 'https://the-internet.herokuapp.com/login'.</msg>
+<status status="PASS" starttime="20230127 12:03:09.279" endtime="20230127 12:03:13.973"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:09.278" endtime="20230127 12:03:13.974"/>
+</kw>
+<kw name="Quando realizo o login" library="base">
+<kw name="Input Text" library="SeleniumLibrary">
+<arg>id=username</arg>
+<arg>tomsmith</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<msg timestamp="20230127 12:03:13.975" level="INFO">Typing text 'tomsmith' into text field 'id=username'.</msg>
+<status status="PASS" starttime="20230127 12:03:13.975" endtime="20230127 12:03:14.054"/>
+</kw>
+<kw name="Input Text" library="SeleniumLibrary">
+<arg>id=password</arg>
+<arg>SuperSecretPassword!</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<msg timestamp="20230127 12:03:14.055" level="INFO">Typing text 'SuperSecretPassword!' into text field 'id=password'.</msg>
+<status status="PASS" starttime="20230127 12:03:14.055" endtime="20230127 12:03:14.144"/>
+</kw>
+<kw name="Click Button" library="SeleniumLibrary">
+<arg>Login</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<msg timestamp="20230127 12:03:14.144" level="INFO">Clicking button 'Login'.</msg>
+<status status="PASS" starttime="20230127 12:03:14.144" endtime="20230127 12:03:14.569"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:13.974" endtime="20230127 12:03:14.569"/>
+</kw>
+<kw name="Então devo visualizar a mensagem &quot;You logged into a secure area!&quot;" library="base" sourcename="Então devo visualizar a mensagem &quot;${mensagem}&quot;">
+<kw name="Element Text Should Be" library="SeleniumLibrary">
+<arg>id=flash</arg>
+<arg>You logged into a secure area!\n×</arg>
+<doc>Verifies that element ``locator`` contains exact the text ``expected``.</doc>
+<msg timestamp="20230127 12:03:14.571" level="INFO">Verifying element 'id=flash' contains exact text 'You logged into a secure area!
+×'.</msg>
+<status status="PASS" starttime="20230127 12:03:14.571" endtime="20230127 12:03:14.595"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:14.570" endtime="20230127 12:03:14.596"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:09.276" endtime="20230127 12:03:14.596"/>
+</test>
+<kw name="Close Browser" library="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" starttime="20230127 12:03:14.598" endtime="20230127 12:03:16.896"/>
+</kw>
+<status status="PASS" starttime="20230127 12:03:09.254" endtime="20230127 12:03:16.896"/>
+</suite>
+<status status="PASS" starttime="20230127 12:03:01.302" endtime="20230127 12:03:16.898"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="2" fail="0" skip="0" id="s1" name="Tests">Tests</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s1" name="Login Chrome">Tests.Login Chrome</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s2" name="LoginEdge">Tests.LoginEdge</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
