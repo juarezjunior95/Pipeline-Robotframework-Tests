@@ -40,7 +40,6 @@ jobs:
       run: |
           pip install -r  requirements.txt
           robot --outputdir E2E/Results --variable BROWSER:chrome --variable HEADLESS:True E2E/Tests
-
     - name: Install Node.js
       uses: actions/setup-node@v1
       with:
