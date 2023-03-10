@@ -1,29 +1,46 @@
-name: Testes Web com Robot Framework
+name: Testes Web
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.9.9-slim-buster
+
     steps:
     - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
     - name: Install dependencies
       run: |
-        apt-get update && apt-get install -y \
-        curl \
-        unzip \
-        && curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb \
-        && dpkg -i /tmp/chrome.deb || apt-get install -yf \
-        && curl https://chromedriver.storage.googleapis.com/`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip --output /tmp/chromedriver.zip \
-        && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
-        && npm install -g npm
-    - name: Run tests
-      working-directory: ./E2E
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Install Chrome Driver
       run: |
-        npm install
-        robot -d results -v BROWSER:chrome tests.robot || true
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        LATEST_CHROMEDRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
+        wget https://chromedriver.storage.googleapis.com/$LATEST_CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/bin/chromedriver
+        sudo chown root:root /usr/bin/chromedriver
+        sudo chmod +x /usr/bin/chromedriver
+
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Run tests
+      run: |
+        robot --outputdir results E2E/
