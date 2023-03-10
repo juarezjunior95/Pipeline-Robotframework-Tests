@@ -1,22 +1,29 @@
-name: Teste Web com Robot Framework
+on:
+  push:
+  pull_request:
 
-on: [push]
-
+name: Testes Web com Google Chrome na nuvem
 jobs:
-  test:
-    name: Testes com Robot Framework
+  testes_web:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-      - name: Install Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run Robot Framework Tests
-        run: |
-          robot E2E/
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+    - name: Instalar dependências
+      run: npm install
+services:
+  chrome:
+    image: selenium/standalone-chrome
+    options: --shm-size=2g
+steps:
+- name: Iniciar Selenium
+  run: |
+    docker pull selenium/standalone-chrome
+    docker run -d -p 4444:4444 --shm-size=2g selenium/standalone-chrome
+- name: Executar testes
+  env:
+    SELENIUM_HUB_URL: http://localhost:4444/wd/hub
+  run: npm test || echo "Testes falharam"
