@@ -4,7 +4,6 @@ Library   pabot.PabotLib
 
 
 
-
 *** Variables ***
 ${url}      https://the-internet.herokuapp.com/login
 
