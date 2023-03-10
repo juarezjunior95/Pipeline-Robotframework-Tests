@@ -24,7 +24,7 @@ jobs:
         pip install robotframework robotframework-seleniumlibrary
 
     - name: Run tests
-      run: robot --outputdir ./results --variable BROWSER:Chrome tests/
+      run: robot --outputdir ./results --variable BROWSER:Chrome tests
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
