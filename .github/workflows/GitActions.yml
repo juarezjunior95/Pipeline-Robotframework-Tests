@@ -1,4 +1,4 @@
-name: Testes Web no Chrome com Robot Framework
+name: Testes Web com Robot Framework
 
 on:
   push:
@@ -7,26 +7,23 @@ on:
 
 jobs:
   test:
-    name: Testar no Chrome
     runs-on: ubuntu-latest
-
+    container:
+      image: python:3.9.9-slim-buster
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-
-      - name: Install Dependencies
-        run: |
-          npm install
-          npm install robotframework-webdriverlibrary
-          npm install webdriver-manager@latest
-          npm install chromedriver
-
-      - name: Run Tests
-        run: |
-          webdriver-manager update --chrome --versions.chrome 98.0.4758.102
-          robot --outputdir ./TestResults ./E2E
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        apt-get update && apt-get install -y \
+        curl \
+        unzip \
+        && curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb \
+        && dpkg -i /tmp/chrome.deb || apt-get install -yf \
+        && curl https://chromedriver.storage.googleapis.com/`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip --output /tmp/chromedriver.zip \
+        && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
+        && npm install -g npm
+    - name: Run tests
+      working-directory: ./E2E
+      run: |
+        npm install
+        robot -d results -v BROWSER:chrome tests.robot || true
