@@ -1,15 +1,17 @@
 name: Web Tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
-    name: Web Tests
     runs-on: ubuntu-latest
     container:
       image: robotframework/robotframework:latest
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v2
     - name: Install dependencies
       run: |
@@ -21,7 +23,7 @@ jobs:
     - name: Run tests
       run: |
         chromedriver &
-        robot --outputdir test_results --variable BROWSER:Chrome tests/
+        robot --outputdir test_results --variable BROWSER:Chrome E2E/
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
       with:
