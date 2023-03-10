@@ -19,4 +19,4 @@ jobs:
           pip install -r requirements.txt
       - name: Run Robot Framework Tests
         run: |
-          robot tests/
+          robot E2E/
