@@ -39,6 +39,7 @@ jobs:
     - name: Executa os testes no modo headless no Google Chrome
       run: |
           pip install -r  requirements.txt
+          google-chrome-stable --headless --disable-gpu --no-sandbox
           robot --outputdir E2E/Results --variable BROWSER:chrome --variable HEADLESS:True E2E/Tests
     - name: Install Node.js
       uses: actions/setup-node@v1
